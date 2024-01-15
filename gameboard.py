@@ -17,8 +17,13 @@ layout = [
     "W.W..............W.W", #3
     "W.W.WW.WW  WW.WW.W.W", #4
     "W......W    W......W", #5
+<<<<<<< HEAD
     "W.W....WWWWWW....W.W", #6
     "W.W..............W.W", #7
+=======
+    "W.W.WW.WWWWWW.WW.W.W", #6
+    "W.W....... ......W.W", #7
+>>>>>>> 19ea877 (Initial commit)
     "W.WW.W.WWWWWW.W.WW.W",  #8
     "W....W........W....W", #9
     "WWWWWWWWWWWWWWWWWWWW"  #10
