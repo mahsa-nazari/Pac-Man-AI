@@ -52,9 +52,11 @@ class GameBoard:
         return self.pacman_position in self.ghosts_positions
 
     def update_pacman_position(self, new_position):
+        print("pacman_position", new_position)
         self.pacman_position = new_position
 
     def update_ghosts_positions(self, new_positions):
+        print("pacman_position", new_positions)
         self.ghosts_positions = new_positions
 
     def is_game_over(self):

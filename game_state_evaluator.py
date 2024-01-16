@@ -1,3 +1,4 @@
+
 class GameStateEvaluator:
     def __init__(self):
         # Initialize any necessary attributes or settings
@@ -15,13 +16,13 @@ class GameStateEvaluator:
         return score
 
     def calculate_pacman_ghost_distance(self, game_board):
-        """
-        Calculate and return the distance between Pac-Man and the nearest ghost.
-        This can be a simple Manhattan distance calculation or more complex logic.
-        """
-        print('dfgdfgbdfsgsdghsd' , game_board.pacman_position, game_board.ghosts_positions)
-        return min(
-            [abs(game_board.pacman_position[0] - ghost_pos[0]) 
-             + abs(game_board.pacman_position[1] - ghost_pos[1])
-             for ghost_pos in game_board.ghosts_positions]
-        )
+        distances = []
+        for ghost_pos in game_board.ghosts_positions:
+            # Ensure ghost_pos is a tuple or list
+            if isinstance(ghost_pos, (tuple, list)) and len(ghost_pos) == 2:
+                distance = abs(game_board.pacman_position[0] - ghost_pos[0]) + \
+                           abs(game_board.pacman_position[1] - ghost_pos[1])
+                distances.append(distance)
+            else:
+                print(f"Invalid ghost position: {ghost_pos}")
+        return min(distances) if distances else 0

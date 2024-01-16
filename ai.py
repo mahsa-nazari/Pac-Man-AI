@@ -14,19 +14,22 @@ class GameAI:
             return self.minimize(game_board, depth, alpha, beta)
 
     def maximize(self, game_board, depth, alpha, beta):
-        max_eval = alpha
+        max_eval = float('-inf')  # Start with the lowest possible evaluation
         best_move = None
-        for ghost_index in range(2):
-            for move in self.get_possible_moves(game_board, True):  # True for Pacman
-                new_board = game_board.clone()
-                new_board.apply_move(move, True)
-                eval, _ = self.minimax(new_board, depth - 1, alpha, beta, False)
-                if eval > max_eval:
-                    max_eval = eval
-                    best_move = move
-                alpha = max(alpha, eval)
-                if beta <= alpha:
-                    break  # Alpha-Beta pruning
+
+        for move in self.get_possible_moves(game_board, True):  # True for Pacman
+            new_board = game_board.clone()
+            new_board.apply_move(move, True)  # Apply Pac-Man's move
+
+            eval, _ = self.minimax(new_board, depth - 1, alpha, beta, False)  # Minimize for ghosts in the next level
+            if eval > max_eval:
+                max_eval = eval
+                best_move = move
+
+            alpha = max(alpha, eval)  # Update alpha
+            if beta <= alpha:
+                break  # Alpha-Beta pruning
+
         return max_eval, best_move
 
     def minimize(self, game_board, depth, alpha, beta):

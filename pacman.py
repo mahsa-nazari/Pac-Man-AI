@@ -44,7 +44,7 @@ while running:
     print('-------------------------------------------------------------')
     if pacman_next_move:
         board.update_pacman_position(pacman_next_move)
-
+    print(47)
     # Update Ghosts' positions randomly
     new_ghost_positions = []
     for i in range(2):
@@ -54,6 +54,7 @@ while running:
         if ghost_moves:
             new_pos = random.choice(ghost_moves)  # Choose a move randomly
             new_ghost_positions.append(new_pos)
+            print('new_ghost_positions', new_ghost_positions)
     print("new_ghost_positions", new_ghost_positions)
     board.update_ghosts_positions(new_ghost_positions)
 
