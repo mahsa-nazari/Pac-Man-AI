@@ -38,7 +38,7 @@ class GameAI:
         for ghost_index in range(2):
             for move in self.get_possible_moves(game_board, False, ghost_index):  # False for Ghosts
                 new_board = game_board.clone()
-                new_board.apply_move(move, False)
+                new_board.apply_move(move, False, ghost_index)
                 eval, _ = self.minimax(new_board, depth - 1, alpha, beta, True)
                 if eval < min_eval:
                     min_eval = eval

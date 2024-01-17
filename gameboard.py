@@ -31,7 +31,6 @@ class GameBoard:
         self.grid = self.create_grid_from_layout(layout)
         self.pacman_position = pacman_initial_pos
         self.ghosts_positions = ghosts_initial_positions
-        print(self.ghosts_positions)
         self.score = 0
 
     def create_grid_from_layout(self, layout):
@@ -52,11 +51,9 @@ class GameBoard:
         return self.pacman_position in self.ghosts_positions
 
     def update_pacman_position(self, new_position):
-        print("pacman_position", new_position)
         self.pacman_position = new_position
 
     def update_ghosts_positions(self, new_positions):
-        print("pacman_position", new_positions)
         self.ghosts_positions = new_positions
 
     def is_game_over(self):
@@ -93,23 +90,19 @@ class GameBoard:
     def is_valid_position(self, pos):
         
         x, y = pos
-        
         if 0 <= x < len(self.grid[0]) and 0 <= y < len(self.grid):
-            print('....', self.grid[y][x])
             return self.grid[y][x] != HINDERANCE
         return False
 
-    def apply_move(self, move, is_pacman):
+    def apply_move(self, move, is_pacman, ghost_index=None):
+
         if is_pacman:
             self.pacman_position = move
-            if self.grid[move[1]][move[0]] == DOT:
-                self.score += 10
-                self.grid[move[1]][move[0]] = EMPTY
+
         else:
-            # Update all ghosts' positions
-            for i, ghost_pos in enumerate(self.ghosts_positions):
-                if move[i] != ghost_pos:
-                    self.ghosts_positions[i] = move[i]
+            self.ghosts_positions[ghost_index] = move
+
+
 
     def clone(self):
         # Create a new GameBoard instance with a copy of the current state

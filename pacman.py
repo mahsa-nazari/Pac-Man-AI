@@ -5,7 +5,6 @@ from characters import Pacman, Ghost
 from ai import GameAI  # Import the AI class
 from game_state_evaluator import GameStateEvaluator
 import random 
-from pygame import time
 
 
 pygame.init()
@@ -15,6 +14,7 @@ pygame.display.set_caption("Pacman Game")
 
 pacman_initial_position = (10, 7)
 ghosts_initial_positions = [(11, 5), (8, 5)]
+score = 0
 
 board = GameBoard(window, pacman_initial_position, ghosts_initial_positions)
 
@@ -41,21 +41,16 @@ while running:
 
     # Update Pac-Man's position using the Minimax algorithm
     _, pacman_next_move = game_ai.minimax(board, 3, float('-inf'), float('inf'), True)  # True for Pacman
-    print('-------------------------------------------------------------')
     if pacman_next_move:
         board.update_pacman_position(pacman_next_move)
-    print(47)
+
     # Update Ghosts' positions randomly
     new_ghost_positions = []
     for i in range(2):
         ghost_moves = board.get_possible_moves(False, i)  # False for ghosts, i is the index
-        print('ghost_moves', ghost_moves)
-        print('-------------------------------------------------------------', ghost_moves)
         if ghost_moves:
             new_pos = random.choice(ghost_moves)  # Choose a move randomly
             new_ghost_positions.append(new_pos)
-            print('new_ghost_positions', new_ghost_positions)
-    print("new_ghost_positions", new_ghost_positions)
     board.update_ghosts_positions(new_ghost_positions)
 
     board.draw()
