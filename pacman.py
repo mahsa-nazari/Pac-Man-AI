@@ -5,6 +5,7 @@ from characters import Pacman, Ghost
 from ai import GameAI  # Import the AI class
 from game_state_evaluator import GameStateEvaluator
 import random 
+from collections import deque
 
 
 pygame.init()
@@ -14,7 +15,7 @@ pygame.display.set_caption("Pacman Game")
 
 pacman_initial_position = (10, 7)
 ghosts_initial_positions = [(11, 5), (8, 5)]
-score = 0
+loss = 0
 
 board = GameBoard(window, pacman_initial_position, ghosts_initial_positions)
 
@@ -32,6 +33,8 @@ game_ai = GameAI(max_depth=3, state_evaluator=state_evaluator)
 running = True
 clock = pygame.time.Clock()
 
+is_pacman_turn = True
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -40,26 +43,34 @@ while running:
     window.fill(BLACK)
 
     # Update Pac-Man's position using the Minimax algorithm
-    _, pacman_next_move = game_ai.minimax(board, 3, float('-inf'), float('inf'), True)  # True for Pacman
-    if pacman_next_move:
-        board.update_pacman_position(pacman_next_move)
+    if is_pacman_turn:
+        _, pacman_next_move = game_ai.minimax(board, 3, float('-inf'), float('inf'), True)  # True for Pacman
+        if pacman_next_move:
+            board.update_pacman_position(pacman_next_move)
 
-    # Update Ghosts' positions randomly
-    new_ghost_positions = []
-    for i in range(2):
-        ghost_moves = board.get_possible_moves(False, i)  # False for ghosts, i is the index
-        if ghost_moves:
-            new_pos = random.choice(ghost_moves)  # Choose a move randomly
-            new_ghost_positions.append(new_pos)
-    board.update_ghosts_positions(new_ghost_positions)
+    else:
+        # Update Ghosts' positions randomly
+        new_ghosts_positions = []
+        for i in range(2):
+            ghost_moves = board.get_possible_moves(False, i)  # False for ghosts, i is the index
+            if ghost_moves:
+                new_pos = random.choice(ghost_moves)  # Choose a move randomly
+                new_ghosts_positions.append(new_pos)
+
+        board.update_ghosts_positions(new_ghosts_positions)
 
     board.draw()
+
+    state_evaluator.print_losses()
 
     if board.is_game_over():
         print("Game Over!")
         running = False
 
     pygame.display.flip()
-    clock.tick(10)
+    is_pacman_turn = not is_pacman_turn
+
+    # Slow down the game a bit more
+    clock.tick(1)
 
 pygame.quit()

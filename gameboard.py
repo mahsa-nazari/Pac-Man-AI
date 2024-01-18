@@ -1,6 +1,7 @@
 import pygame
 from settings import *
 import copy
+from collections import deque
 
 # Define grid values
 EMPTY = 0
@@ -54,7 +55,13 @@ class GameBoard:
         self.pacman_position = new_position
 
     def update_ghosts_positions(self, new_positions):
-        self.ghosts_positions = new_positions
+        if isinstance(new_positions, list) and len(new_positions) == 2 and all(isinstance(pos, tuple) and len(pos) == 2 for pos in new_positions):
+            self.ghosts_positions = new_positions
+        else:
+            print(f"Invalid update: {new_positions}. Expected a list of two tuples.")
+        
+    
+
 
     def is_game_over(self):
         return self.pacman_caught_by_ghost()
@@ -117,4 +124,28 @@ class GameBoard:
     def ghosts_positions(self):
         return self.ghosts_positions
 
-    
+    def pacman_ghost_distance(self, ghost_index):
+        # Breadth-First Search algorithm to find the shortest path
+        start = self.ghosts_positions[ghost_index]
+        goal = self.pacman_position
+        queue = deque([[start]])
+        visited = set()
+
+        while queue:
+            path = queue.popleft()
+            x, y = path[-1]
+
+            if (x, y) == goal:
+                return len(path) - 1  # Subtract 1 to exclude the starting node
+
+            if (x, y) not in visited:
+                visited.add((x, y))
+                for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                    next_x, next_y = x + dx, y + dy
+                    if self.is_valid_position((next_x, next_y)) and (next_x, next_y) not in visited:
+                        new_path = list(path)
+                        new_path.append((next_x, next_y))
+                        queue.append(new_path)
+        print("BFS algo didnt work")
+        return float('inf')
+
