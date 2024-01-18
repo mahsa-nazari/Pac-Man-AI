@@ -3,7 +3,6 @@ from settings import *
 from gameboard import GameBoard
 from characters import Pacman, Ghost
 from ai import GameAI  # Import the AI class
-from game_state_evaluator import GameStateEvaluator
 import random 
 from collections import deque
 
@@ -25,10 +24,8 @@ ghosts = [Ghost(11, 5, RED), Ghost(8, 5, PINK)]
 
 
 
-state_evaluator = GameStateEvaluator()
-
 # Now, pass this instance when creating the GameAI object
-game_ai = GameAI(max_depth=3, state_evaluator=state_evaluator)
+game_ai = GameAI(max_depth=8)
 
 running = True
 clock = pygame.time.Clock()
@@ -45,8 +42,8 @@ while running:
     # Update Pac-Man's position using the Minimax algorithm
     if is_pacman_turn:
         _, pacman_next_move = game_ai.minimax(board, 3, float('-inf'), float('inf'), True)  # True for Pacman
-        if pacman_next_move:
-            board.update_pacman_position(pacman_next_move)
+        #board.update_pacman_position(pacman_next_move)
+        board.apply_move(pacman_next_move, is_pacman=True, ghost_index=None)
 
     else:
         # Update Ghosts' positions randomly
@@ -61,8 +58,6 @@ while running:
 
     board.draw()
 
-    state_evaluator.print_losses()
-
     if board.is_game_over():
         print("Game Over!")
         running = False
@@ -71,6 +66,6 @@ while running:
     is_pacman_turn = not is_pacman_turn
 
     # Slow down the game a bit more
-    clock.tick(1)
+    clock.tick(5)
 
 pygame.quit()

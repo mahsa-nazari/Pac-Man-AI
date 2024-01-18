@@ -32,7 +32,7 @@ class GameBoard:
         self.grid = self.create_grid_from_layout(layout)
         self.pacman_position = pacman_initial_pos
         self.ghosts_positions = ghosts_initial_positions
-        self.score = 0
+        self.dot = 0
 
     def create_grid_from_layout(self, layout):
         grid = []
@@ -61,10 +61,8 @@ class GameBoard:
             print(f"Invalid update: {new_positions}. Expected a list of two tuples.")
         
     
-
-
     def is_game_over(self):
-        return self.pacman_caught_by_ghost()
+        return self.pacman_caught_by_ghost() or self.dot ==99
 
     def draw(self):
         self.window.fill(BLACK)
@@ -105,6 +103,14 @@ class GameBoard:
 
         if is_pacman:
             self.pacman_position = move
+            x, y = move
+
+        
+            # Check if Pac-Man is on a dot and eat it
+            if self.grid[y][x] == DOT:
+                self.grid[y][x] = EMPTY
+                self.dot +=1
+
 
         else:
             self.ghosts_positions[ghost_index] = move
@@ -115,7 +121,7 @@ class GameBoard:
         # Create a new GameBoard instance with a copy of the current state
         cloned_board = GameBoard(self.window, self.pacman_position, copy.deepcopy(self.ghosts_positions))
         cloned_board.grid = copy.deepcopy(self.grid)
-        cloned_board.score = self.score
+        cloned_board.dot = self.dot
         return cloned_board
     
     def pacman_position(self):
