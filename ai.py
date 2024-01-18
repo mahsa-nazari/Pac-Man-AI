@@ -1,13 +1,13 @@
 class GameAI:
     def __init__(self, max_depth):
         self.max_depth = max_depth  
-        self.loss
+        self.loss = 0
 
 
     def minimax(self, game_board, depth, alpha, beta, maximizing_player):
         # Unchanged
         if depth == 0 or self.game_over(game_board):
-            return self.evaluate_state(game_board), None
+            return self.evaluate_state(game_board, is_pacman=True), None
 
         if maximizing_player:
             return self.maximize(game_board, depth, alpha, beta)
@@ -55,18 +55,21 @@ class GameAI:
     def game_over(self, game_board):
         return game_board.is_game_over()
     
-    def evaluate_state(self, game_board, v=True, is_pacman):
+    def evaluate_state(self, game_board, is_pacman, v=True):
         """
         Evaluate the current state of the game board and return a loss.
         A higher loss typically means a more favorable state for Pac-Man.
         """
         # Example scoring logic: Pac-Man should avoid ghosts
         distances = (game_board.pacman_ghost_distance(0), game_board.pacman_ghost_distance(1))
-        self.min_distance = min(distances)
+        min_distance = min(distances)
         loss_multiplier = 10  # Adjust this multiplier as needed
         #import dot eatign score from board
         self.dot = game_board.dot
-        m = 1
+        possible_moves = game_board.get_possible_moves(True)
+        print("possible_moves", possible_moves)
+        m = 10
+        if self.dot > 50: m =25
         """""
         #if self.min_distance == 0: self.loss = -20
         #elif self.min_distance == 1: self.loss = -10
@@ -77,8 +80,10 @@ class GameAI:
         elif self.dot >90: m =200
         """
         self.loss = m * self.dot
+        if min_distance == 0: self.loss -= 100
         #self.loss = self.dot_score -  # +1 to avoid division by zero
-        if v & is_pacman: print("loss", self.loss, "minimun distance", self.min_distance, "dots_eaten: ", self.dot)
+        if v & is_pacman: print("loss", self.loss, "minimun distance", min_distance, "dots_eaten: ", self.dot)
+        if is_pacman: not is_pacman
         return self.loss
 
 
