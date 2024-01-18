@@ -41,7 +41,7 @@ while running:
 
     # Update Pac-Man's position using the Minimax algorithm
     if is_pacman_turn:
-        _, pacman_next_move = game_ai.minimax(board, 3, float('-inf'), float('inf'), True)  # True for Pacman
+        _, pacman_next_move = game_ai.minimax(board, 8, float('-inf'), float('inf'), True)  # True for Pacman
         #board.update_pacman_position(pacman_next_move)
         board.apply_move(pacman_next_move, is_pacman=True, ghost_index=None)
 
