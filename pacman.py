@@ -25,7 +25,7 @@ ghosts = [Ghost(11, 5, RED), Ghost(8, 5, PINK)]
 
 
 # Now, pass this instance when creating the GameAI object
-game_ai = GameAI(max_depth=8)
+game_ai = GameAI(max_depth=6)
 
 running = True
 clock = pygame.time.Clock()
@@ -41,7 +41,7 @@ while running:
 
     # Update Pac-Man's position using the Minimax algorithm
     if is_pacman_turn:
-        _, pacman_next_move = game_ai.minimax(board, 8, float('-inf'), float('inf'), True)  # True for Pacman
+        _, pacman_next_move = game_ai.minimax(board, 6, float('-inf'), float('inf'), True)  # True for Pacman
         #board.update_pacman_position(pacman_next_move)
         board.apply_move(pacman_next_move, is_pacman=True, ghost_index=None)
 
@@ -57,7 +57,7 @@ while running:
         board.update_ghosts_positions(new_ghosts_positions)
 
     board.draw()
-
+    print("dots:", board.dot)
     if board.is_game_over():
         print("Game Over!")
         running = False
@@ -66,6 +66,6 @@ while running:
     is_pacman_turn = not is_pacman_turn
 
     # Slow down the game a bit more
-    clock.tick(5)
+    clock.tick(200)
 
 pygame.quit()
