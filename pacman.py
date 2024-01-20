@@ -25,13 +25,16 @@ ghosts = [Ghost(11, 5, RED), Ghost(8, 5, PINK)]
 
 
 # Now, pass this instance when creating the GameAI object
-game_ai = GameAI(max_depth=16, v=False)
+game_ai = GameAI(v=False)
 
 running = True
 clock = pygame.time.Clock()
 
 is_pacman_turn = True
 step = 0
+last_dot_eaten_step = 0
+
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -41,9 +44,33 @@ while running:
 
     # Update Pac-Man's position using the Minimax algorithm
     if is_pacman_turn:
-        _, pacman_next_move = game_ai.minimax(board, 6, float('-inf'), float('inf'), True)  # True for Pacman
-        #board.update_pacman_position(pacman_next_move)
+        # Tracking the number of dots eaten and steps since the last dot was eaten
+        dots = board.dot
+        steps_since_last_dot = step - last_dot_eaten_step
+
+        # Default depth for the Minimax algorithm
+        depth = 4
+        print('step: ', step)
+        step +=1
+
+        # Adjusting the depth based on how long it's been since Pac-Man last ate a dot
+        # If it's been 120 steps or more, increase depth to 9 for broader search
+        #if steps_since_last_dot >= 120:
+            #depth = 9
+        # If it's been 60 steps or more, increase depth to 7 for a moderately broader search
+        if steps_since_last_dot >= 50:
+            depth = 6
+        print('steps_since_last_dot', steps_since_last_dot, 'depth', depth)
+
+        # Using the Minimax algorithm to decide Pac-Man's next move with the current depth
+        _, pacman_next_move = game_ai.minimax(board, depth, float('-inf'), float('inf'), True)  # True for Pacman
+        
+        # Applying the chosen move to Pac-Man
         board.apply_move(pacman_next_move, is_pacman=True, ghost_index=None)
+        # Update the last dot eaten step if Pac-Man eats a dot in this move
+        if board.dot > dots: last_dot_eaten_step = step
+
+        game_ai.log()
 
     else:
         # Update Ghosts' positions randomly
@@ -54,12 +81,10 @@ while running:
                 new_pos = random.choice(ghost_moves)  # Choose a move randomly
                 new_ghosts_positions.append(new_pos)
 
+        # Update the positions of the ghosts on the board
         board.update_ghosts_positions(new_ghosts_positions)
 
     board.draw()
-    step +=1
-    print('step',step)
-    game_ai.log()
     if game_ai.dot == 99:
         print('You won!')
         running = False
@@ -70,7 +95,7 @@ while running:
     pygame.display.flip()
     is_pacman_turn = not is_pacman_turn
 
-    # Slow down the game a bit more
+
     clock.tick(200)
 
 pygame.quit()

@@ -1,7 +1,9 @@
+pacman_position_history = [(10,7)]
+
 import random
 class GameAI:
-    def __init__(self, max_depth, v=True):
-        self.base_max_depth = max_depth  # Base maximum depth
+    def __init__(self, v=True):
+
         self.v = v
 
 
@@ -63,32 +65,39 @@ class GameAI:
         return game_board.is_game_over()
     
     def evaluate_state(self, game_board, v=True):
+        global pacman_position_history
         """
-        Evaluate the current state of the game board and return a loss.
-        A higher loss typically means a more favorable state for Pac-Man.
+        Evaluate the current state of the game board and return a score.
+        A higher score means a more favorable state for Pac-Man.
         """
         pacman_position = game_board.pacman_position
-        self.loss = 0
+        pacman_position_history = game_board.update_pacman_history(pacman_position_history, pacman_position)
+        self.score = 0
         if pacman_position in [(11, 5), (8, 5)]: 
-            self.loss -= 10
-        # Example scoring logic: Pac-Man should avoid ghosts
+            self.score -= 10
+
+        # Pac-Man should avoid ghosts
         distances = (game_board.pacman_ghost_distance(0), game_board.pacman_ghost_distance(1))
         self.min_distance = min(distances)
-        loss_multiplier = 10  # Adjust this multiplier as needed
         #import dot eatign score from board
         self.dot = game_board.dot
-        self.possible_moves = game_board.get_possible_moves(True)
-        #exploration_bonus = len(possible_moves)
-        #print("possible_moves", possible_moves, is_pacman)
-        m = 10
-        self.loss = m * self.dot + 2*random.random()
-        if self.min_distance == 0: self.loss -= 100
 
-        #self.loss = self.dot_score -  # +1 to avoid division by zero
-        #print("Score", self.loss, "minimun distance", self.min_distance, "dots_eaten: ", self.dot, 'branch: ', self.depth)
-        return self.loss 
+        self.possible_moves = game_board.get_possible_moves(True)
+
+        m = 10
+        # different pathes can lead to identical score and this will prevent pacman form moving forward, the issue got fixed by
+        #adding a small random component can improve the process of decision making by adding variability witohut changing the overall outcome 
+        self.score = m * self.dot + 2*random.random()
+        # Higher score for not recursive movements 
+        if pacman_position not in pacman_position_history[-4:]: self.score +=25
+        elif pacman_position not in pacman_position_history[-10:]: self.score +=10
+
+        if self.min_distance == 0: self.score -= 200
+
+        return self.score
+     
     def log(self):
-        print("Score", self.loss, "minimun distance", self.min_distance, "dots_eaten: ", self.dot, 'branch: ', self.depth)
+        print("Score", self.score, "Minimun distance to ghosts", self.min_distance, "Dots eaten: ", self.dot)
 
 
     

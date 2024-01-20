@@ -52,7 +52,13 @@ class GameBoard:
         return self.pacman_position in self.ghosts_positions
 
     def update_pacman_position(self, new_position):
+        # Update Pac-Man's position
         self.pacman_position = new_position
+
+        
+    def update_pacman_history(self, pacman_history, new_position):
+        pacman_history.append(new_position)
+        return pacman_history[-10:]
 
     def update_ghosts_positions(self, new_positions):
         if isinstance(new_positions, list) and len(new_positions) == 2 and all(isinstance(pos, tuple) and len(pos) == 2 for pos in new_positions):
@@ -157,4 +163,4 @@ class GameBoard:
                         queue.append(new_path)
         print("BFS algo didnt work")
         return float('inf')
-
+    
