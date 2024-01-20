@@ -62,7 +62,7 @@ class GameBoard:
         
     
     def is_game_over(self):
-        if self.dot ==99: print("You Won")
+
         return self.pacman_caught_by_ghost() or self.dot ==99
 
     def draw(self):

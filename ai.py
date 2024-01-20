@@ -1,8 +1,8 @@
 import random
 class GameAI:
-    def __init__(self, max_depth):
+    def __init__(self, max_depth, v=True):
         self.base_max_depth = max_depth  # Base maximum depth
-
+        self.v = v
 
 
     def minimax(self, game_board, depth, alpha, beta, maximizing_player):
@@ -31,6 +31,7 @@ class GameAI:
 
             alpha = max(alpha, eval)  # Update alpha
             if beta <= alpha:
+                if self.v: print('alpha pruning')
                 break  # Alpha-Beta pruning
 
         return max_eval, best_move
@@ -50,6 +51,7 @@ class GameAI:
 
                 beta = min(beta, eval)
                 if beta <= alpha:
+                    if self.v: print('beta pruning')
                     break  # Alpha-Beta pruning
 
         return min_eval, best_move
@@ -65,7 +67,10 @@ class GameAI:
         Evaluate the current state of the game board and return a loss.
         A higher loss typically means a more favorable state for Pac-Man.
         """
+        pacman_position = game_board.pacman_position
         self.loss = 0
+        if pacman_position in [(11, 5), (8, 5)]: 
+            self.loss -= 10
         # Example scoring logic: Pac-Man should avoid ghosts
         distances = (game_board.pacman_ghost_distance(0), game_board.pacman_ghost_distance(1))
         self.min_distance = min(distances)
@@ -80,8 +85,10 @@ class GameAI:
         if self.min_distance == 0: self.loss -= 100
 
         #self.loss = self.dot_score -  # +1 to avoid division by zero
-        print("loss", self.loss, "minimun distance", self.min_distance, "dots_eaten: ", self.dot, 'branch: ', self.depth)
+        #print("Score", self.loss, "minimun distance", self.min_distance, "dots_eaten: ", self.dot, 'branch: ', self.depth)
         return self.loss 
+    def log(self):
+        print("Score", self.loss, "minimun distance", self.min_distance, "dots_eaten: ", self.dot, 'branch: ', self.depth)
 
 
     

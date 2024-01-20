@@ -25,13 +25,13 @@ ghosts = [Ghost(11, 5, RED), Ghost(8, 5, PINK)]
 
 
 # Now, pass this instance when creating the GameAI object
-game_ai = GameAI(max_depth=6)
+game_ai = GameAI(max_depth=16, v=False)
 
 running = True
 clock = pygame.time.Clock()
 
 is_pacman_turn = True
-
+step = 0
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -57,7 +57,12 @@ while running:
         board.update_ghosts_positions(new_ghosts_positions)
 
     board.draw()
-    print("dots:", board.dot)
+    step +=1
+    print('step',step)
+    game_ai.log()
+    if game_ai.dot == 99:
+        print('You won!')
+        running = False
     if board.is_game_over():
         print("Game Over!")
         running = False
