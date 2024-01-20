@@ -78,8 +78,10 @@ class GameBoard:
         pygame.draw.circle(self.window, YELLOW, (self.pacman_position[0] * CELL_SIZE + CELL_SIZE // 2, self.pacman_position[1] * CELL_SIZE + CELL_SIZE // 2), CELL_SIZE // 2)
 
         # Draw Ghosts
-        for ghost_pos in self.ghosts_positions:
-            pygame.draw.circle(self.window, RED, (ghost_pos[0] * CELL_SIZE + CELL_SIZE // 2, ghost_pos[1] * CELL_SIZE + CELL_SIZE // 2), CELL_SIZE // 2)
+        for i, ghost_pos in enumerate(self.ghosts_positions):
+            if i == 0: color = RED
+            elif i == 1: color = PINK
+            pygame.draw.circle(self.window, color, (ghost_pos[0] * CELL_SIZE + CELL_SIZE // 2, ghost_pos[1] * CELL_SIZE + CELL_SIZE // 2), CELL_SIZE // 2)
     
     def get_possible_moves(self, is_pacman, ghost_index=None):
         moves = []
