@@ -21,3 +21,4 @@ bin/
 __pycache__/
 .coverage
 *.seed
+*.mp4
