@@ -1,1 +1,1 @@
-# Pac-Man
+# Pac-Man Using Minimax Algorithm

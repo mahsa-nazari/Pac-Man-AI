@@ -1,15 +1,13 @@
-pacman_position_history = [(10,7)]
+pacman_position_history = [(10, 7)]
 
 import random
+
 class GameAI:
     def __init__(self, v=True):
-
         self.v = v
 
-
     def minimax(self, game_board, depth, alpha, beta, maximizing_player):
-        self.possible_moves = self.get_possible_moves(game_board, True)
-        self.depth = depth
+        possible_moves = self.get_possible_moves(game_board, True) 
         if depth == 0 or self.game_over(game_board):
             return self.evaluate_state(game_board, maximizing_player), None
 
@@ -33,7 +31,6 @@ class GameAI:
 
             alpha = max(alpha, eval)  # Update alpha
             if beta <= alpha:
-                if self.v: print('alpha pruning')
                 break  # Alpha-Beta pruning
 
         return max_eval, best_move
@@ -41,6 +38,7 @@ class GameAI:
     def minimize(self, game_board, depth, alpha, beta):
         min_eval = float('inf')
         best_move = None
+
         for ghost_index in range(2):
             for move in game_board.get_possible_moves(False, ghost_index):  # False for Ghosts
                 new_board = game_board.clone()
@@ -53,7 +51,6 @@ class GameAI:
 
                 beta = min(beta, eval)
                 if beta <= alpha:
-                    if self.v: print('beta pruning')
                     break  # Alpha-Beta pruning
 
         return min_eval, best_move
@@ -63,7 +60,7 @@ class GameAI:
 
     def game_over(self, game_board):
         return game_board.is_game_over()
-    
+
     def evaluate_state(self, game_board, v=True):
         global pacman_position_history
         """
@@ -71,35 +68,30 @@ class GameAI:
         A higher score means a more favorable state for Pac-Man.
         """
         pacman_position = game_board.pacman_position
-        pacman_position_history = game_board.update_pacman_history(pacman_position_history, pacman_position)
-        self.score = 0
-        if pacman_position in [(11, 5), (8, 5)]: 
-            self.score -= 10
+
+        score = 0 
+        if pacman_position in [(11, 5), (8, 5)]:
+            score -= 10
 
         # Pac-Man should avoid ghosts
         distances = (game_board.pacman_ghost_distance(0), game_board.pacman_ghost_distance(1))
-        self.min_distance = min(distances)
-        #import dot eatign score from board
-        self.dot = game_board.dot
+        min_distance = min(distances)  
+        exploration_bonus = 10 
 
-        self.possible_moves = game_board.get_possible_moves(True)
+        dot_score = game_board.dot 
+        if dot_score > 70:
+            exploration_bonus = 20
 
-        m = 10
-        # different pathes can lead to identical score and this will prevent pacman form moving forward, the issue got fixed by
-        #adding a small random component can improve the process of decision making by adding variability witohut changing the overall outcome 
-        self.score = m * self.dot + 2*random.random()
-        # Higher score for not recursive movements 
-        if pacman_position not in pacman_position_history[-4:]: self.score +=25
-        elif pacman_position not in pacman_position_history[-10:]: self.score +=10
+        # Different paths can lead to identical scores; adding randomness to improve variability
+        score = 10 * dot_score + 2 * random.random()
 
-        if self.min_distance == 0: self.score -= 200
+        # Higher score for non-recursive movements
+        if pacman_position not in pacman_position_history:
+            score += exploration_bonus
 
-        return self.score
-     
-    def log(self):
-        print("Score", self.score, "Minimun distance to ghosts", self.min_distance, "Dots eaten: ", self.dot)
+        pacman_position_history = game_board.update_pacman_history(pacman_position_history, pacman_position)
 
+        if min_distance == 0:
+            score -= 200
 
-    
-
-
+        return score

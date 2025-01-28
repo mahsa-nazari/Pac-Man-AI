@@ -5,7 +5,7 @@ from characters import Pacman, Ghost
 from ai import GameAI  # Import the AI class
 import random 
 from collections import deque
-
+from moviepy import VideoClip 
 
 pygame.init()
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -23,17 +23,14 @@ pacman = Pacman(10, 7)
 ghosts = [Ghost(11, 5, RED), Ghost(8, 5, PINK)]
 
 
-
-# Now, pass this instance when creating the GameAI object
 game_ai = GameAI(v=False)
 
 running = True
 clock = pygame.time.Clock()
-
+frames = []
 is_pacman_turn = True
 step = 0
 last_dot_eaten_step = 0
-
 
 while running:
     for event in pygame.event.get():
@@ -50,17 +47,11 @@ while running:
 
         # Default depth for the Minimax algorithm
         depth = 4
-        print('step: ', step)
         step +=1
 
         # Adjusting the depth based on how long it's been since Pac-Man last ate a dot
-        # If it's been 120 steps or more, increase depth to 9 for broader search
-        #if steps_since_last_dot >= 120:
-            #depth = 9
-        # If it's been 60 steps or more, increase depth to 7 for a moderately broader search
         if steps_since_last_dot >= 50:
             depth = 6
-        print('steps_since_last_dot', steps_since_last_dot, 'depth', depth)
 
         # Using the Minimax algorithm to decide Pac-Man's next move with the current depth
         _, pacman_next_move = game_ai.minimax(board, depth, float('-inf'), float('inf'), True)  # True for Pacman
@@ -70,7 +61,7 @@ while running:
         # Update the last dot eaten step if Pac-Man eats a dot in this move
         if board.dot > dots: last_dot_eaten_step = step
 
-        game_ai.log()
+        # game_ai.log()
 
     else:
         # Update Ghosts' positions randomly
@@ -85,17 +76,25 @@ while running:
         board.update_ghosts_positions(new_ghosts_positions)
 
     board.draw()
+
+    frame = pygame.surfarray.array3d(window)  
+    frames.append(frame.transpose([1, 0, 2])) 
+
     if game_ai.dot == 99:
-        print('You won!')
         running = False
     if board.is_game_over():
-        print("Game Over!")
         running = False
 
     pygame.display.flip()
     is_pacman_turn = not is_pacman_turn
 
 
-    clock.tick(200)
+    clock.tick(100)
 
 pygame.quit()
+
+if frames:
+    print("Saving video...")
+    clip = VideoClip(lambda t: frames[int(t * 200)], duration=len(frames) / 200)  # 200 FPS
+    clip.write_videofile("pacman_gameplay.mp4", fps=200)
+    print("Video saved as pacman_gameplay.mp4")

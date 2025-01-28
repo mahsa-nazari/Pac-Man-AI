@@ -57,8 +57,9 @@ class GameBoard:
 
         
     def update_pacman_history(self, pacman_history, new_position):
-        pacman_history.append(new_position)
-        return pacman_history[-10:]
+        if new_position not in pacman_history:
+            pacman_history.append(new_position)
+        return pacman_history[-20:]
 
     def update_ghosts_positions(self, new_positions):
         if isinstance(new_positions, list) and len(new_positions) == 2 and all(isinstance(pos, tuple) and len(pos) == 2 for pos in new_positions):

@@ -17,3 +17,7 @@ bin/
 *.dylib
 .env
 .env.local
+*.pyc
+__pycache__/
+.coverage
+*.seed
